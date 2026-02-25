@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Task Manager</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        darkBg: '#0f172a',
+                        darkCard: '#1e293b'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body
+    class="bg-indigo-50/50 text-gray-800 dark:bg-darkBg dark:text-gray-200 transition-colors duration-300 min-h-screen flex flex-col font-sans">
+
+    <!-- Navbar -->
+    <header
+        class="bg-white/80 dark:bg-darkCard/80 backdrop-blur-md shadow-sm sticky top-0 z-10 transition-colors duration-300 border-b border-gray-200 dark:border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
+                        <i class="fa-solid fa-layer-group text-xl"></i>
+                    </div>
+                    <h1
+                        class="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-400">
+                        TaskMaster</h1>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button id="theme-toggle"
+                        class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-600 dark:text-yellow-400">
+                        <i class="fa-solid fa-moon dark:hidden"></i>
+                        <i class="fa-solid fa-sun hidden dark:block"></i>
+                    </button>
+                    <button id="add-task-btn"
+                        class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-5 py-2.5 rounded-xl shadow-lg shadow-blue-500/30 transition-all transform hover:-translate-y-0.5 flex items-center gap-2 font-medium">
+                        <i class="fa-solid fa-plus"></i> <span class="hidden sm:inline">New Task</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-6">
+
+        <!-- Controls (Search & Filter) -->
+        <div class="flex flex-col md:flex-row gap-4 justify-between items-center mb-2">
+            <div class="relative w-full md:max-w-md group">
+                <i
+                    class="fa-solid fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors"></i>
+                <input type="text" id="search-input" placeholder="Search tasks by title or description..."
+                    class="w-full pl-11 pr-4 py-3 bg-white dark:bg-darkCard border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-500/50 text-sm shadow-sm transition-all">
+            </div>
+            <div class="flex w-full md:w-auto gap-4">
+                <div class="relative w-full md:w-48">
+                    <select id="priority-filter"
+                        class="w-full appearance-none bg-white dark:bg-darkCard border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm shadow-sm transition-all cursor-pointer font-medium">
+                        <option value="all">Priority: All</option>
+                        <option value="high">High Priority</option>
+                        <option value="medium">Medium Priority</option>
+                        <option value="low">Low Priority</option>
+                    </select>
+                    <i
+                        class="fa-solid fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none text-xs"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kanban Board -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1 items-start h-full pb-8">
+
+            <!-- Todo Column -->
+            <div class="flex flex-col h-full max-h-[calc(100vh-230px)]">
+                <div class="flex justify-between items-center mb-4 px-1">
+                    <h2 class="font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                        <div class="w-2.5 h-2.5 rounded-full bg-gray-400"></div> To Do
+                    </h2>
+                    <span id="todo-count"
+                        class="bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-bold px-2.5 py-1 rounded-full">0</span>
+                </div>
+                <div id="column-todo"
+                    class="task-column flex-1 overflow-y-auto space-y-3 min-h-[200px] bg-gray-100/50 dark:bg-darkCard/30 rounded-2xl p-3 border border-gray-200/50 dark:border-gray-800/50 transition-colors"
+                    data-status="todo">
+                    <!-- Tasks injected here -->
+                </div>
+            </div>
+
+            <!-- In Progress Column -->
+            <div class="flex flex-col h-full max-h-[calc(100vh-230px)]">
+                <div class="flex justify-between items-center mb-4 px-1">
+                    <h2 class="font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                        <div class="w-2.5 h-2.5 rounded-full bg-blue-500"></div> In Progress
+                    </h2>
+                    <span id="inprogress-count"
+                        class="bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 text-xs font-bold px-2.5 py-1 rounded-full">0</span>
+                </div>
+                <div id="column-in-progress"
+                    class="task-column flex-1 overflow-y-auto space-y-3 min-h-[200px] bg-blue-50/50 dark:bg-blue-900/10 rounded-2xl p-3 border border-blue-100 dark:border-blue-900/30 transition-colors"
+                    data-status="in-progress">
+                    <!-- Tasks injected here -->
+                </div>
+            </div>
+
+            <!-- Completed Column -->
+            <div class="flex flex-col h-full max-h-[calc(100vh-230px)]">
+                <div class="flex justify-between items-center mb-4 px-1">
+                    <h2 class="font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                        <div class="w-2.5 h-2.5 rounded-full bg-emerald-500"></div> Completed
+                    </h2>
+                    <span id="completed-count"
+                        class="bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 text-xs font-bold px-2.5 py-1 rounded-full">0</span>
+                </div>
+                <div id="column-completed"
+                    class="task-column flex-1 overflow-y-auto space-y-3 min-h-[200px] bg-emerald-50/50 dark:bg-emerald-900/10 rounded-2xl p-3 border border-emerald-100 dark:border-emerald-900/30 transition-colors"
+                    data-status="completed">
+                    <!-- Tasks injected here -->
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Task Modal Overlay -->
+    <div id="task-modal"
+        class="fixed inset-0 bg-gray-900/40 dark:bg-black/60 backdrop-blur-sm z-50 hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-4">
+        <div
+            class="bg-white dark:bg-darkCard rounded-2xl shadow-2xl w-full max-w-md transform scale-95 transition-transform duration-300 flex flex-col max-h-[90vh] border border-gray-100 dark:border-gray-800">
+            <div class="flex justify-between items-center p-6 border-b border-gray-100 dark:border-gray-800">
+                <h3 id="modal-title"
+                    class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-400">
+                    Add New Task</h3>
+                <button id="close-modal-btn"
+                    class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto custom-scrollbar">
+                <form id="task-form" class="space-y-5">
+                    <input type="hidden" id="task-id">
+                    <div>
+                        <label
+                            class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5 line-clamp-1">Task
+                            Title <span class="text-red-500">*</span></label>
+                        <input type="text" id="task-title" required
+                            class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
+                            placeholder="e.g. Redesign landing page">
+                    </div>
+                    <div>
+                        <label
+                            class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">Description</label>
+                        <textarea id="task-desc" rows="3"
+                            class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors resize-none"
+                            placeholder="Add more details..."></textarea>
+                    </div>
+                    <div class="grid grid-cols-2 gap-5">
+                        <div class="relative">
+                            <label
+                                class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">Priority</label>
+                            <select id="task-priority"
+                                class="w-full appearance-none px-4 py-2.5 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors font-medium">
+                                <option value="low">Low Priority</option>
+                                <option value="medium" selected>Medium Priority</option>
+                                <option value="high">High Priority</option>
+                            </select>
+                            <i
+                                class="fa-solid fa-chevron-down absolute right-3 top-[38px] text-gray-400 pointer-events-none text-xs"></i>
+                        </div>
+                        <div class="relative">
+                            <label
+                                class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">Status</label>
+                            <select id="task-status"
+                                class="w-full appearance-none px-4 py-2.5 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors font-medium">
+                                <option value="todo">To Do</option>
+                                <option value="in-progress">In Progress</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                            <i
+                                class="fa-solid fa-chevron-down absolute right-3 top-[38px] text-gray-400 pointer-events-none text-xs"></i>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div
+                class="p-6 border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-darkCard/50 rounded-b-2xl flex justify-end gap-3">
+                <button id="cancel-modal-btn"
+                    class="px-5 py-2.5 font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl transition-colors">Cancel</button>
+                <button type="submit" form="task-form"
+                    class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium px-6 py-2.5 rounded-xl shadow-lg shadow-blue-500/30 transition-all transform hover:-translate-y-0.5">Save
+                    Task</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div id="delete-modal"
+        class="fixed inset-0 bg-gray-900/40 dark:bg-black/60 backdrop-blur-sm z-50 hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-4">
+        <div
+            class="bg-white dark:bg-darkCard rounded-2xl shadow-2xl w-full max-w-sm transform scale-95 transition-transform duration-300 p-6 text-center border border-gray-100 dark:border-gray-800">
+            <div
+                class="w-16 h-16 bg-red-100 dark:bg-red-500/20 text-red-500 rounded-full flex items-center justify-center mx-auto mb-5 shadow-inner">
+                <i class="fa-solid fa-trash-can text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Delete Task</h3>
+            <p class="text-gray-500 dark:text-gray-400 mb-8 text-sm">Are you sure you want to delete this task? This
+                action cannot be undone.</p>
+            <div class="flex gap-3">
+                <button id="cancel-delete-btn"
+                    class="flex-1 px-4 py-2.5 font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl transition-colors">Cancel</button>
+                <button id="confirm-delete-btn"
+                    class="flex-1 px-4 py-2.5 font-medium bg-red-500 hover:bg-red-600 text-white rounded-xl shadow-lg shadow-red-500/30 transition-all transform hover:-translate-y-0.5">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/app.js?v=3"></script>
+</body>
+
+</html>
