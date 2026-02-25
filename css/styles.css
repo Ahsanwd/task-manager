@@ -1,0 +1,98 @@
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+    background: #475569;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+}
+
+/* Drag and Drop styles */
+.task-card {
+    cursor: grab;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.task-card:active {
+    cursor: grabbing;
+}
+
+.task-card.dragging {
+    opacity: 0.4;
+    transform: scale(0.95) rotate(-2deg);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.task-column.drag-over {
+    background-color: rgba(59, 130, 246, 0.05);
+    border: 2px dashed rgba(59, 130, 246, 0.5);
+}
+
+.dark .task-column.drag-over {
+    background-color: rgba(59, 130, 246, 0.1);
+    border: 2px dashed rgba(59, 130, 246, 0.4);
+}
+
+/* Base animations */
+@keyframes slideInUp {
+    from { 
+        opacity: 0; 
+        transform: translateY(15px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
+@keyframes slideOutDown {
+    from { 
+        opacity: 1; 
+        transform: scale(1); 
+    }
+    to { 
+        opacity: 0; 
+        transform: scale(0.9) translateY(10px); 
+    }
+}
+
+.animate-slide-in {
+    animation: slideInUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-slide-out {
+    animation: slideOutDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Highlight new element */
+@keyframes highlightAction {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+.task-highlight {
+    animation: highlightAction 0.3s ease-out;
+}
